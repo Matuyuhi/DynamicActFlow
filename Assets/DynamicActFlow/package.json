@@ -1,0 +1,23 @@
+{
+  "name": "com.matuyuhi.dynamicactflow",
+  "version": "0.1.0",
+  "displayName": "DynamicActFlow",
+  "description": "",
+  "unity": "2022.3",
+  "unityRelease": "18f1",
+  "keywords": [
+    "unity",
+    "flow",
+    "action"
+  ],
+  "author": {
+    "name": "Matuyuhi",
+    "email": "bird9.yuhi@gmail.com",
+    "url": "https://github.com/Matuyuhi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Matuyuhi/DynamicActFlow.git"
+  },
+  "license": "MIT"
+}

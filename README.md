@@ -1,2 +1,2 @@
-# ActSynth
-Unity Library ActSynth &amp; test
+# DynamicActFlow
+Unity Library DynamicActFlow & test
