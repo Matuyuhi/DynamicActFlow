@@ -1,22 +1,34 @@
+#region
+
 using DynamicActFlow.Runtime.Core;
 using DynamicActFlow.Runtime.Core.Action;
 using UnityEngine;
+
+#endregion
 
 namespace DynamicActFlow.Runtime.Feature
 {
     [ActionTag("MoveLoop")]
     public sealed class MoveAction : FixedUpdatedAction
     {
-        [ActionParameter("loopCount", 1)] private int LoopCount { get; set; } = 1;
-        
-        [ActionParameter("direction")] private Vector3 Direction { get; set; } = Vector3.forward;
+        private int currentLoop;
+        private bool movingTowardsTarget = true;
 
-        [ActionParameter("range", 5f)] private float Range { get; set; } = 5f;
-        
         private Vector3 startPosition;
         private Vector3 targetPosition;
-        private int currentLoop = 0;
-        private bool movingTowardsTarget = true;
+        [ActionParameter("loopCount", 1)] private int LoopCount { get; set; }
+
+        [ActionParameter("direction")] private Vector3 Direction { get; set; }
+
+        [ActionParameter("range", 5f)] private float Range { get; set; }
+
+        public override void SetDefault()
+        {
+            base.SetDefault();
+            LoopCount = 1;
+            Range = 5f;
+            Direction = Vector3.forward;
+        }
 
         protected override void Start()
         {
@@ -28,7 +40,7 @@ namespace DynamicActFlow.Runtime.Feature
         {
             if (currentLoop < LoopCount)
             {
-                var step = 5f * Time.fixedDeltaTime;  // 移動距離を計算
+                var step = 5f * Time.fixedDeltaTime; // 移動距離を計算
                 var target = movingTowardsTarget ? targetPosition : startPosition;
 
                 // 現在位置から目標位置に向かって移動
@@ -47,9 +59,6 @@ namespace DynamicActFlow.Runtime.Feature
             }
         }
 
-        protected override bool CheckIfEnd()
-        {
-            return currentLoop >= LoopCount;
-        }
+        protected override bool CheckIfEnd() => currentLoop >= LoopCount;
     }
 }

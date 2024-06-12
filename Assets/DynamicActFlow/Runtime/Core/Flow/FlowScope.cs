@@ -1,13 +1,18 @@
+#region
+
 using DynamicActFlow.Runtime.Core.Action;
 using UnityEngine;
 
+#endregion
+
 namespace DynamicActFlow.Runtime.Core.Flow
 {
-    public abstract class FlowScope: FlowScopeBase
+    public abstract class FlowScope : FlowScopeBase
     {
         private IFlowBuilder builder;
-        
+
         private Coroutine coroutine;
+
         protected virtual void Start()
         {
             builder = new FlowBuilder(this);
@@ -20,7 +25,7 @@ namespace DynamicActFlow.Runtime.Core.Flow
             StopFlow();
             coroutine = StartCoroutine(Flow(builder));
         }
-        
+
         protected void StopFlow()
         {
             if (coroutine != null)
@@ -28,15 +33,9 @@ namespace DynamicActFlow.Runtime.Core.Flow
                 StopCoroutine(coroutine);
             }
         }
-        
-        protected override ActionRef Action(string actionName)
-        {
-            return builder.Action(actionName);
-        }
 
-        protected override ActionRef Wait(float seconds)
-        {
-            return builder.Action(ActionName.Wait).Param("seconds", seconds);
-        }
+        protected override ActionRef Action(string actionName) => builder.Action(actionName);
+
+        protected override ActionRef Wait(float seconds) => builder.Action(ActionName.Wait).Param("seconds", seconds);
     }
 }

@@ -1,13 +1,17 @@
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DynamicActFlow.Runtime.Core.Action;
 
+#endregion
+
 namespace DynamicActFlow.Runtime.Core
 {
     /// <summary>
-    /// Factory class used to create instances of ActionBase subclasses based on a given tag.
+    ///     Factory class used to create instances of ActionBase subclasses based on a given tag.
     /// </summary>
     internal static class ActionFactory
     {
@@ -22,7 +26,7 @@ namespace DynamicActFlow.Runtime.Core
         {
             var actionTypes = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(ActionBase)) && t.GetCustomAttribute<ActionTagAttribute>() != null);
-        
+
             foreach (var type in actionTypes)
             {
                 var tagAttribute = type.GetCustomAttribute<ActionTagAttribute>();
@@ -31,7 +35,7 @@ namespace DynamicActFlow.Runtime.Core
         }
 
         /// <summary>
-        /// Creates an instance of ActionBase subclass based on the given tag.
+        ///     Creates an instance of ActionBase subclass based on the given tag.
         /// </summary>
         /// <param name="tag">The tag used to identify the action.</param>
         /// <returns>An instance of ActionBase subclass.</returns>
@@ -45,47 +49,45 @@ namespace DynamicActFlow.Runtime.Core
 
             var action = (ActionBase)Activator.CreateInstance(value);
             action.SetDefaultProperty();
+            action.SetDefault();
             return action;
         }
-        
-        private static PropertyInfo[] GetAllProperties(this ActionBase action)
-        {
-            return action.GetType().GetProperties(
+
+        private static PropertyInfo[] GetAllProperties(this ActionBase action) =>
+            action.GetType().GetProperties(
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
             );
-        }
-        
+
         public static void SetProperty<T>(this ActionBase action, string propertyName, T value)
         {
-            
             var propertyInfo = action
                 .GetAllProperties()
                 .FirstOrDefault(prop => prop.GetCustomAttributes<ActionParameterAttribute>(false)
                     .Any(attr => attr.Tag == propertyName));
-            
+
             if (propertyInfo == null || !propertyInfo.CanWrite)
             {
                 return;
             }
-            
+
             var parameter = propertyInfo.GetCustomAttributes(typeof(ActionParameterAttribute), false)
                 .Cast<ActionParameterAttribute>()
                 .FirstOrDefault(attr => attr.Tag == propertyName);
-            
+
             // 値の型が正しいかチェックし、プロパティに値を設定
             if (propertyInfo.PropertyType == value.GetType())
             {
                 propertyInfo.SetValue(action, value);
                 return;
             }
-            
+
             // if can set attr.Value to propertyInfo
             if (parameter == null || parameter.DefaultValue.GetType() != propertyInfo.PropertyType)
             {
                 throw new InvalidOperationException(
                     $"Type mismatch for property '{propertyName}'. Expected type {propertyInfo.PropertyType}, but got type {value.GetType()}.");
             }
-            
+
             propertyInfo.SetValue(action, parameter.DefaultValue);
         }
 
@@ -108,7 +110,8 @@ namespace DynamicActFlow.Runtime.Core
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Type mismatch for property '{property.Name}'. Expected type {property.PropertyType}, but got type {attribute.DefaultValue.GetType()}.");
+                    throw new InvalidOperationException(
+                        $"Type mismatch for property '{property.Name}'. Expected type {property.PropertyType}, but got type {attribute.DefaultValue.GetType()}.");
                 }
             }
         }

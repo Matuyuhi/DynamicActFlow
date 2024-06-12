@@ -1,30 +1,30 @@
+#region
+
 using System;
 using System.Collections;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
+
+#endregion
 
 namespace DynamicActFlow.Runtime.Core.Action
 {
     public class ActionRef
     {
+        private readonly ActionBase action;
+        private readonly MonoBehaviour owner;
+        private Action<string, object> a;
 
-        private ActionBase action;
-        private MonoBehaviour owner;
-        
         internal ActionRef(ActionBase action, MonoBehaviour owner)
         {
             this.action = action;
             this.owner = owner;
         }
 
-        private Action<string, object> a;
-        
         internal void SetCallback(Action<string, object> callback)
         {
             a = callback;
         }
-        
+
         internal void SetParam(string key, object param)
         {
             action.SetProperty(key, param);

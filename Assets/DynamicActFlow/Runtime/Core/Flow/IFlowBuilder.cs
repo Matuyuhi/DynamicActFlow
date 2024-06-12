@@ -1,10 +1,13 @@
+#region
+
 using DynamicActFlow.Runtime.Core.Action;
+
+#endregion
 
 namespace DynamicActFlow.Runtime.Core.Flow
 {
     public interface IFlowBuilder
     {
-    
-        public ActionRef GetActionRef(ActionBase action);
+        internal ActionRef GetActionRef(ActionBase action);
     }
 }

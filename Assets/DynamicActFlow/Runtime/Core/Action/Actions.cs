@@ -1,10 +1,13 @@
+#region
+
 using DynamicActFlow.Runtime.Core.Flow;
+
+#endregion
 
 namespace DynamicActFlow.Runtime.Core.Action
 {
     public static class Actions
     {
-
         internal static ActionRef Action(this IFlowBuilder builder, string tag) =>
             builder.GetActionRef(ActionFactory.CreateAction(tag));
 
@@ -13,7 +16,7 @@ namespace DynamicActFlow.Runtime.Core.Action
             action.SetParam(key, value);
             return action;
         }
-        
+
         public static ActionRef IfEnd(this ActionRef action, string key, object value)
         {
             action.SetParam(key, value);

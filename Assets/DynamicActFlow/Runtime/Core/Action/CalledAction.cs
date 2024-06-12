@@ -1,11 +1,14 @@
+#region
+
 using System.Collections;
+
+#endregion
 
 namespace DynamicActFlow.Runtime.Core.Action
 {
     /// <summary>
-    /// 
     /// </summary>
-    public abstract class CalledAction: ActionBase
+    public abstract class CalledAction : ActionBase
     {
         protected abstract IEnumerator Call();
 
