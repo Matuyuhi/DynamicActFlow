@@ -13,11 +13,13 @@ namespace DynamicActFlow.Runtime.Core
     /// <summary>
     ///     Factory class used to create instances of ActionBase subclasses based on a given tag.
     /// </summary>
-    internal static class ActionFactory
+    internal static class FlowFactory
     {
         private static readonly Dictionary<string, Type> ActionMap = new();
 
-        static ActionFactory()
+        private static readonly Dictionary<string, Type> TriggerMap = new();
+
+        static FlowFactory()
         {
             RegisterActions();
         }
@@ -31,6 +33,15 @@ namespace DynamicActFlow.Runtime.Core
             {
                 var tagAttribute = type.GetCustomAttribute<ActionTagAttribute>();
                 ActionMap[tagAttribute.Tag] = type;
+            }
+
+            var triggerTypes = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.IsSubclassOf(typeof(TriggerBase)) && t.GetCustomAttribute<TriggerTagAttribute>() != null);
+
+            foreach (var type in triggerTypes)
+            {
+                var tagAttribute = type.GetCustomAttribute<TriggerTagAttribute>();
+                TriggerMap[tagAttribute.Tag] = type;
             }
         }
 
@@ -49,20 +60,39 @@ namespace DynamicActFlow.Runtime.Core
 
             var action = (ActionBase)Activator.CreateInstance(value);
             action.SetDefaultProperty();
-            action.SetDefault();
+            action.OnCreated();
             return action;
         }
 
-        private static PropertyInfo[] GetAllProperties(this ActionBase action) =>
+        /// <summary>
+        ///     Creates an instance of TriggerBase subclass based on the given tag.
+        /// </summary>
+        /// <param name="tag">The tag used to identify the trigger.</param>
+        /// <returns>An instance of TriggerBase subclass.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when no trigger is found with the given tag.</exception>
+        public static TriggerBase CreateTrigger(string tag)
+        {
+            if (!TriggerMap.TryGetValue(tag, out var value))
+            {
+                throw new InvalidOperationException("No trigger found with tag: " + tag);
+            }
+
+            var trigger = (TriggerBase)Activator.CreateInstance(value);
+            trigger.OnCreated();
+            return trigger;
+        }
+
+        private static PropertyInfo[] GetAllProperties<TB>(this TB action) where TB : class =>
             action.GetType().GetProperties(
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
             );
 
-        public static void SetProperty<T>(this ActionBase action, string propertyName, T value)
+        private static void SetProperty<TA, TB, T>(this TB action, string propertyName, T value)
+            where TA : ParameterBaseAttribute where TB : class
         {
             var propertyInfo = action
                 .GetAllProperties()
-                .FirstOrDefault(prop => prop.GetCustomAttributes<ActionParameterAttribute>(false)
+                .FirstOrDefault(prop => prop.GetCustomAttributes<TA>(false)
                     .Any(attr => attr.Tag == propertyName));
 
             if (propertyInfo == null || !propertyInfo.CanWrite)
@@ -70,8 +100,8 @@ namespace DynamicActFlow.Runtime.Core
                 return;
             }
 
-            var parameter = propertyInfo.GetCustomAttributes(typeof(ActionParameterAttribute), false)
-                .Cast<ActionParameterAttribute>()
+            var parameter = propertyInfo.GetCustomAttributes(typeof(TA), false)
+                .Cast<TA>()
                 .FirstOrDefault(attr => attr.Tag == propertyName);
 
             // 値の型が正しいかチェックし、プロパティに値を設定
@@ -89,6 +119,16 @@ namespace DynamicActFlow.Runtime.Core
             }
 
             propertyInfo.SetValue(action, parameter.DefaultValue);
+        }
+
+        public static void SetProperty<T>(this ActionBase action, string propertyName, T value)
+        {
+            action.SetProperty<ActionParameterAttribute, ActionBase, T>(propertyName, value);
+        }
+
+        public static void SetProperty<T>(this TriggerBase trigger, string propertyName, T value)
+        {
+            trigger.SetProperty<TriggerParameterAttribute, TriggerBase, T>(propertyName, value);
         }
 
         private static void SetDefaultProperty(this ActionBase action)

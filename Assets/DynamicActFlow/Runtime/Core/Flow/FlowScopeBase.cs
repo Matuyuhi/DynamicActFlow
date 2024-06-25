@@ -12,10 +12,10 @@ namespace DynamicActFlow.Runtime.Core.Flow
     {
         protected abstract IEnumerator Flow(IFlowBuilder context);
 
-        protected abstract void FlowCreate();
+        protected abstract void FlowStart();
+
+        protected abstract void FlowStop();
 
         protected abstract ActionRef Action(string actionName);
-
-        protected abstract ActionRef Wait(float seconds);
     }
 }

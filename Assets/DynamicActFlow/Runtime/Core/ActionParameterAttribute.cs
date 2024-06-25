@@ -4,10 +4,10 @@ using System;
 
 #endregion
 
-namespace DynamicActFlow.Runtime.Core.Action
+namespace DynamicActFlow.Runtime.Core
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public class ActionParameterAttribute : Attribute
+    public sealed class ActionParameterAttribute : ParameterBaseAttribute
     {
         public ActionParameterAttribute(string tag, object defaultValue = default)
         {
@@ -15,9 +15,5 @@ namespace DynamicActFlow.Runtime.Core.Action
 
             DefaultValue = defaultValue;
         }
-
-        public string Tag { get; private set; }
-
-        public object DefaultValue { get; private set; }
     }
 }

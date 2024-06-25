@@ -18,5 +18,7 @@ namespace DynamicActFlow.Runtime.Core.Flow
         }
 
         ActionRef IFlowBuilder.GetActionRef(ActionBase action) => action.CreateActionRef(owner);
+
+        TriggerRef IFlowBuilder.GetTriggerRef(TriggerBase trigger) => trigger.CreateTriggerRef(owner);
     }
 }

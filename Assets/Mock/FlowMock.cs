@@ -10,7 +10,7 @@ namespace Mock
         {
             yield return Action("MoveLoop")
                 .Param("loopCount", 2)
-                .Execute();
+                .Build();
         }
         
     }

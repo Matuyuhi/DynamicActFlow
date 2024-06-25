@@ -16,15 +16,15 @@ namespace DynamicActFlow.Runtime.Feature
 
         private Vector3 startPosition;
         private Vector3 targetPosition;
-        [ActionParameter("loopCount", 1)] private int LoopCount { get; set; }
+        [ActionParameter("LoopCount", 1)] private int LoopCount { get; set; }
 
-        [ActionParameter("direction")] private Vector3 Direction { get; set; }
+        [ActionParameter("Direction")] private Vector3 Direction { get; set; }
 
-        [ActionParameter("range", 5f)] private float Range { get; set; }
+        [ActionParameter("Range", 5f)] private float Range { get; set; }
 
-        public override void SetDefault()
+        public override void OnCreated()
         {
-            base.SetDefault();
+            base.OnCreated();
             LoopCount = 1;
             Range = 5f;
             Direction = Vector3.forward;

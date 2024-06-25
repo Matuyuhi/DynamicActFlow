@@ -13,5 +13,11 @@ namespace DynamicActFlow.Runtime.Core.Action
             ActionRef actionRef = new(action, owner);
             return actionRef;
         }
+
+        internal static TriggerRef CreateTriggerRef(this TriggerBase trigger, MonoBehaviour owner)
+        {
+            TriggerRef triggerRef = new(trigger, owner);
+            return triggerRef;
+        }
     }
 }

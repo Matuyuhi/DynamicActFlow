@@ -1,6 +1,5 @@
 #region
 
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,11 +7,10 @@ using UnityEngine;
 
 namespace DynamicActFlow.Runtime.Core.Action
 {
-    public class ActionRef
+    public class ActionRef : Ref
     {
         private readonly ActionBase action;
         private readonly MonoBehaviour owner;
-        private Action<string, object> a;
 
         internal ActionRef(ActionBase action, MonoBehaviour owner)
         {
@@ -20,19 +18,30 @@ namespace DynamicActFlow.Runtime.Core.Action
             this.owner = owner;
         }
 
-        internal void SetCallback(Action<string, object> callback)
-        {
-            a = callback;
-        }
-
-        internal void SetParam(string key, object param)
+        internal override void SetParam(string key, object param)
         {
             action.SetProperty(key, param);
         }
 
-        public IEnumerator Execute()
+        internal void SetTrigger(TriggerBase trigger)
+        {
+            action.SetTrigger(trigger);
+        }
+
+        public IEnumerator Build()
         {
             yield return owner.StartCoroutine(action.ExecuteActionCoroutine(owner));
+        }
+
+        public ActionType Type()
+        {
+            return action switch
+            {
+                FixedUpdatedAction => ActionType.FixedUpdated,
+                UpdatedAction => ActionType.Updated,
+                CalledAction => ActionType.Called,
+                _ => throw new("Unknown action type"),
+            };
         }
     }
 }

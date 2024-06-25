@@ -1,5 +1,6 @@
 #region
 
+using System.Collections;
 using DynamicActFlow.Runtime.Core.Action;
 using UnityEngine;
 
@@ -9,24 +10,34 @@ namespace DynamicActFlow.Runtime.Core.Flow
 {
     public abstract class FlowScope : FlowScopeBase
     {
+        [SerializeField] protected bool autoPlay;
+
         private IFlowBuilder builder;
 
         private Coroutine coroutine;
 
-        protected virtual void Start()
+        protected void Start()
+        {
+            if (autoPlay)
+            {
+                FlowStart();
+            }
+        }
+
+
+        protected override void FlowStart()
         {
             builder = new FlowBuilder(this);
             FlowCreate();
         }
 
-
-        protected override void FlowCreate()
+        private void FlowCreate()
         {
-            StopFlow();
+            FlowStop();
             coroutine = StartCoroutine(Flow(builder));
         }
 
-        protected void StopFlow()
+        protected override void FlowStop()
         {
             if (coroutine != null)
             {
@@ -36,6 +47,11 @@ namespace DynamicActFlow.Runtime.Core.Flow
 
         protected override ActionRef Action(string actionName) => builder.Action(actionName);
 
-        protected override ActionRef Wait(float seconds) => builder.Action(ActionName.Wait).Param("seconds", seconds);
+        protected IEnumerator Wait(float seconds) => builder.Action(ActionName.Wait).Param("seconds", seconds).Build();
+
+        protected ActionRef InfinityWait(float maxTime) =>
+            builder.Action(ActionName.InfinityWait).Param("Seconds", maxTime);
+
+        protected TriggerRef Trigger(string triggerName) => builder.Trigger(triggerName);
     }
 }

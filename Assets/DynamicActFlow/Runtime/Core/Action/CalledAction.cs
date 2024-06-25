@@ -7,6 +7,8 @@ using System.Collections;
 namespace DynamicActFlow.Runtime.Core.Action
 {
     /// <summary>
+    ///     CalledAction is an abstract base class for creating actions that can be executed within a flow.
+    ///     It inherits from the ActionBase class.
     /// </summary>
     public abstract class CalledAction : ActionBase
     {

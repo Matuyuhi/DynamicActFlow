@@ -1,6 +1,5 @@
 #region
 
-using System.Collections;
 using DynamicActFlow.Runtime.Core;
 using DynamicActFlow.Runtime.Core.Action;
 using UnityEngine;
@@ -9,9 +8,10 @@ using UnityEngine;
 
 namespace DynamicActFlow.Runtime.Feature
 {
-    [ActionTag(ActionName.Wait)]
-    public sealed class WaitAction : CalledAction
+    [ActionTag(ActionName.InfinityWait)]
+    public class InfinityWaitAction : FixedUpdatedAction
     {
+        private float elapsedTime;
         [ActionParameter("Seconds", 1f)] private float Seconds { get; set; }
 
         public override void OnCreated()
@@ -20,9 +20,16 @@ namespace DynamicActFlow.Runtime.Feature
             Seconds = 1f;
         }
 
-        protected override IEnumerator Call()
+        protected override void Start()
         {
-            yield return new WaitForSeconds(Seconds);
+            elapsedTime = 0;
         }
+
+        protected override void FixedUpdate()
+        {
+            elapsedTime += Time.fixedDeltaTime;
+        }
+
+        protected override bool CheckIfEnd() => elapsedTime >= Seconds;
     }
 }

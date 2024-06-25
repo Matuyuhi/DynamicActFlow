@@ -6,6 +6,9 @@ using System.Collections;
 
 namespace DynamicActFlow.Runtime.Core.Action
 {
+    /// <summary>
+    ///     Represents an abstract base class for updated actions.
+    /// </summary>
     public abstract class UpdatedAction : ActionBase
     {
         protected abstract void Start();
@@ -17,7 +20,8 @@ namespace DynamicActFlow.Runtime.Core.Action
         protected override IEnumerator OnAction()
         {
             Start();
-            while (!CheckIfEnd())
+            Trigger?.Start();
+            while (!CheckIfEnd() && !IfEndWithTrigger())
             {
                 Update();
                 yield return null;
