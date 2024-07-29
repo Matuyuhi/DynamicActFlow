@@ -26,23 +26,23 @@ namespace DynamicActFlow.Runtime.Core
 
         private static void RegisterActions()
         {
-            var actionTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(ActionBase)) && t.GetCustomAttribute<ActionTagAttribute>() != null);
+            AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes())
+                .Where(t => t.IsSubclassOf(typeof(ActionBase)) && t.GetCustomAttribute<ActionTagAttribute>() != null)
+                .ToList()
+                .ForEach(type =>
+                {
+                    var tagAttribute = type.GetCustomAttribute<ActionTagAttribute>();
+                    ActionMap[tagAttribute.Tag] = type;
+                });
 
-            foreach (var type in actionTypes)
-            {
-                var tagAttribute = type.GetCustomAttribute<ActionTagAttribute>();
-                ActionMap[tagAttribute.Tag] = type;
-            }
-
-            var triggerTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(TriggerBase)) && t.GetCustomAttribute<TriggerTagAttribute>() != null);
-
-            foreach (var type in triggerTypes)
-            {
-                var tagAttribute = type.GetCustomAttribute<TriggerTagAttribute>();
-                TriggerMap[tagAttribute.Tag] = type;
-            }
+            AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes())
+                .Where(t => t.IsSubclassOf(typeof(TriggerBase)) && t.GetCustomAttribute<TriggerTagAttribute>() != null)
+                .ToList()
+                .ForEach(type =>
+                {
+                    var tagAttribute = type.GetCustomAttribute<TriggerTagAttribute>();
+                    TriggerMap[tagAttribute.Tag] = type;
+                });
         }
 
         /// <summary>
