@@ -47,7 +47,7 @@ namespace DynamicActFlow.Runtime.Core.Flow
 
         protected override ActionRef Action(string actionName) => builder.Action(actionName);
 
-        protected IEnumerator Wait(float seconds) => builder.Action(ActionName.Wait).Param("seconds", seconds).Build();
+        protected IEnumerator Wait(float seconds) => builder.Action(ActionName.Wait).Param("Seconds", seconds).Build();
 
         protected ActionRef InfinityWait(float maxTime) =>
             builder.Action(ActionName.InfinityWait).Param("Seconds", maxTime);
