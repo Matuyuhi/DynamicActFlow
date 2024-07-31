@@ -52,6 +52,24 @@ namespace DynamicActFlow.Runtime.Core.Action
         }
 
         /// <summary>
+        ///     <p>Ends the conditional if statement.</p>
+        /// </summary>
+        /// <param name="action">The action reference.</param>
+        /// <param name="triggers">The triggers to check.</param>
+        /// <returns>The updated action reference.</returns>
+        /// <exception cref="NotSupportedParameterException"></exception>
+        public static ActionRef IfEnd(this ActionRef action, TriggerBase[] triggers)
+        {
+            if (action.Type() == ActionType.Called)
+            {
+                throw new NotSupportedParameterException("IfEnd is not supported for Called actions");
+            }
+
+            action.SetTriggers(triggers);
+            return action;
+        }
+
+        /// <summary>
         ///     Creates a new instance of TriggerRef for the specified tag.
         /// </summary>
         /// <param name="builder">The flow builder.</param>

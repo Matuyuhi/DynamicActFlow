@@ -1,7 +1,8 @@
 #region
 
 using System.Collections;
-using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 #endregion
@@ -15,7 +16,7 @@ namespace DynamicActFlow.Runtime.Core.Action
         /// </summary>
         protected MonoBehaviour Owner;
 
-        [CanBeNull] protected TriggerBase Trigger { get; private set; }
+        private List<TriggerBase> Trigger { get; set; } = new();
 
         public virtual void OnCreated()
         {
@@ -23,10 +24,20 @@ namespace DynamicActFlow.Runtime.Core.Action
 
         internal void SetTrigger(TriggerBase trigger)
         {
-            Trigger = trigger;
+            Trigger.Add(trigger);
         }
 
-        protected bool IfEndWithTrigger() => Trigger != null && Trigger.IfEnd(Owner);
+        internal void SetTriggers(TriggerBase[] triggers)
+        {
+            Trigger = new(triggers);
+        }
+
+        internal void StartTrigger()
+        {
+            Trigger.ForEach(trigger => trigger.Start());
+        }
+
+        protected bool IfEndWithTrigger() => Trigger != null && Trigger.Any(trigger => trigger.IfEnd(Owner));
 
         protected abstract IEnumerator OnAction();
 

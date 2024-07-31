@@ -28,6 +28,11 @@ namespace DynamicActFlow.Runtime.Core.Action
             action.SetTrigger(trigger);
         }
 
+        internal void SetTriggers(TriggerBase[] triggers)
+        {
+            action.SetTriggers(triggers);
+        }
+
         public IEnumerator Build()
         {
             yield return owner.StartCoroutine(action.ExecuteActionCoroutine(owner));

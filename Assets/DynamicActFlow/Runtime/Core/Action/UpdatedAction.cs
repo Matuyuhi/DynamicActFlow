@@ -20,7 +20,7 @@ namespace DynamicActFlow.Runtime.Core.Action
         protected override IEnumerator OnAction()
         {
             Start();
-            Trigger?.Start();
+            StartTrigger();
             while (!CheckIfEnd() && !IfEndWithTrigger())
             {
                 Update();
