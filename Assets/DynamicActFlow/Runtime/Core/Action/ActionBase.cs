@@ -18,7 +18,7 @@ namespace DynamicActFlow.Runtime.Core.Action
 
         private List<TriggerBase> Trigger { get; set; } = new();
         
-        private float Timeout { get; set; }
+        private float? Timeout { get; set; }
         
         private float ElapsedTime { get; set; }
 
@@ -48,7 +48,7 @@ namespace DynamicActFlow.Runtime.Core.Action
 
         protected bool IfEndWithTrigger()
         {
-            return Trigger != null && Trigger.Any(trigger => trigger.IfEnd(Owner)) || Time.time - ElapsedTime > Timeout;
+            return Trigger != null && Trigger.Any(trigger => trigger.IfEnd(Owner)) || Timeout.HasValue && Time.time - ElapsedTime > Timeout.Value;
         }
 
         protected abstract IEnumerator OnAction();
