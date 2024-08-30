@@ -17,6 +17,10 @@ namespace DynamicActFlow.Runtime.Core.Action
         protected MonoBehaviour Owner;
 
         private List<TriggerBase> Trigger { get; set; } = new();
+        
+        private float Timeout { get; set; }
+        
+        private float ElapsedTime { get; set; }
 
         public virtual void OnCreated()
         {
@@ -31,19 +35,28 @@ namespace DynamicActFlow.Runtime.Core.Action
         {
             Trigger = new(triggers);
         }
+        
+        internal void SetTimeout(float timeout)
+        {
+            Timeout = timeout;
+        }
 
         internal void StartTrigger()
         {
             Trigger.ForEach(trigger => trigger.Start());
         }
 
-        protected bool IfEndWithTrigger() => Trigger != null && Trigger.Any(trigger => trigger.IfEnd(Owner));
+        protected bool IfEndWithTrigger()
+        {
+            return Trigger != null && Trigger.Any(trigger => trigger.IfEnd(Owner)) || Time.time - ElapsedTime > Timeout;
+        }
 
         protected abstract IEnumerator OnAction();
 
         public IEnumerator ExecuteActionCoroutine(MonoBehaviour @object)
         {
             Owner = @object;
+            ElapsedTime = Time.time;
             yield return OnAction();
         }
     }

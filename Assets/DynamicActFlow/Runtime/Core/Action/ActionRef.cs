@@ -33,6 +33,10 @@ namespace DynamicActFlow.Runtime.Core.Action
             action.SetTriggers(triggers);
         }
 
+        internal void SetTimeout(float timeout)
+        {
+            action.SetTimeout(timeout);
+        }
         public IEnumerator Build()
         {
             yield return owner.StartCoroutine(action.ExecuteActionCoroutine(owner));
