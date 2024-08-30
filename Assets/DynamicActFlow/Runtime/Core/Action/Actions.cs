@@ -128,6 +128,17 @@ namespace DynamicActFlow.Runtime.Core.Action
             action.SetTriggers(new[] {trigger1, trigger2, trigger3, trigger4});
             return action;
         }
+        
+        public static ActionRef Timeout(this ActionRef action, float timeoutSec)
+        {
+            if (action.Type() == ActionType.Called)
+            {
+                throw new NotSupportedParameterException("Timeout is not supported for Called actions");
+            }
+
+            action.SetTimeout(timeoutSec);
+            return action;
+        }
 
 
         /// <summary>
