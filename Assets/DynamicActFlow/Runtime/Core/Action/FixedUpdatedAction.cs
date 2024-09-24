@@ -18,10 +18,17 @@ namespace DynamicActFlow.Runtime.Core.Action
     /// </remarks>
     public abstract class FixedUpdatedAction : ActionBase
     {
-        protected abstract void Start();
+        protected virtual void Start()
+        {
+        }
+
         protected abstract void FixedUpdate();
 
         protected abstract bool CheckIfEnd();
+
+        protected virtual void OnEnd()
+        {
+        }
 
         protected override IEnumerator OnAction()
         {
@@ -32,6 +39,8 @@ namespace DynamicActFlow.Runtime.Core.Action
                 FixedUpdate();
                 yield return new WaitForFixedUpdate();
             }
+
+            OnEnd();
         }
     }
 }
