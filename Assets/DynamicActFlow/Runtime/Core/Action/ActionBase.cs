@@ -17,9 +17,9 @@ namespace DynamicActFlow.Runtime.Core.Action
         protected MonoBehaviour Owner;
 
         private List<TriggerBase> Trigger { get; set; } = new();
-        
+
         private float? Timeout { get; set; }
-        
+
         private float ElapsedTime { get; set; }
 
         public virtual void OnCreated()
@@ -35,7 +35,7 @@ namespace DynamicActFlow.Runtime.Core.Action
         {
             Trigger = new(triggers);
         }
-        
+
         internal void SetTimeout(float timeout)
         {
             Timeout = timeout;
@@ -48,7 +48,8 @@ namespace DynamicActFlow.Runtime.Core.Action
 
         protected bool IfEndWithTrigger()
         {
-            return Trigger != null && Trigger.Any(trigger => trigger.IfEnd(Owner)) || Timeout.HasValue && Time.time - ElapsedTime > Timeout.Value;
+            return (Trigger != null && Trigger.Any(trigger => trigger.IfEnd(Owner))) ||
+                   (Timeout.HasValue && Time.time - ElapsedTime > Timeout.Value);
         }
 
         protected abstract IEnumerator OnAction();

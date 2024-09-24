@@ -11,10 +11,17 @@ namespace DynamicActFlow.Runtime.Core.Action
     /// </summary>
     public abstract class UpdatedAction : ActionBase
     {
-        protected abstract void Start();
+        protected virtual void Start()
+        {
+        }
+
         protected abstract void Update();
 
         protected abstract bool CheckIfEnd();
+
+        protected virtual void OnEnd()
+        {
+        }
 
 
         protected override IEnumerator OnAction()
@@ -26,6 +33,8 @@ namespace DynamicActFlow.Runtime.Core.Action
                 Update();
                 yield return null;
             }
+
+            OnEnd();
         }
     }
 }

@@ -85,10 +85,10 @@ namespace DynamicActFlow.Runtime.Core.Action
                 throw new NotSupportedParameterException("IfEnd is not supported for Called actions");
             }
 
-            action.SetTriggers(new[] {trigger1, trigger2});
+            action.SetTriggers(new[] { trigger1, trigger2, });
             return action;
         }
-        
+
         /// <summary>
         ///     Ends the conditional if statements.
         /// </summary>
@@ -97,18 +97,19 @@ namespace DynamicActFlow.Runtime.Core.Action
         /// <param name="trigger2">The trigger to check.</param>
         /// <param name="trigger3">The trigger to check.</param>
         /// <returns>The updated action reference.</returns>
-        public static ActionRef IfEnd(this ActionRef action, TriggerBase trigger1, TriggerBase trigger2, TriggerBase trigger3)
+        public static ActionRef IfEnd(this ActionRef action, TriggerBase trigger1, TriggerBase trigger2,
+            TriggerBase trigger3)
         {
             if (action.Type() == ActionType.Called)
             {
                 throw new NotSupportedParameterException("IfEnd is not supported for Called actions");
             }
 
-            action.SetTriggers(new[] {trigger1, trigger2, trigger3});
+            action.SetTriggers(new[] { trigger1, trigger2, trigger3, });
             return action;
         }
-        
-                
+
+
         /// <summary>
         ///     Ends the conditional if statements.
         /// </summary>
@@ -118,17 +119,18 @@ namespace DynamicActFlow.Runtime.Core.Action
         /// <param name="trigger3">The trigger to check.</param>
         /// <param name="trigger4">The trigger to check.</param>
         /// <returns>The updated action reference.</returns>
-        public static ActionRef IfEnd(this ActionRef action, TriggerBase trigger1, TriggerBase trigger2, TriggerBase trigger3, TriggerBase trigger4)
+        public static ActionRef IfEnd(this ActionRef action, TriggerBase trigger1, TriggerBase trigger2,
+            TriggerBase trigger3, TriggerBase trigger4)
         {
             if (action.Type() == ActionType.Called)
             {
                 throw new NotSupportedParameterException("IfEnd is not supported for Called actions");
             }
 
-            action.SetTriggers(new[] {trigger1, trigger2, trigger3, trigger4});
+            action.SetTriggers(new[] { trigger1, trigger2, trigger3, trigger4, });
             return action;
         }
-        
+
         public static ActionRef Timeout(this ActionRef action, float timeoutSec)
         {
             if (action.Type() == ActionType.Called)
