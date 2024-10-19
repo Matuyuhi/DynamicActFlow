@@ -90,35 +90,43 @@ namespace DynamicActFlow.Runtime.Core
         private static void SetProperty<TA, TB, T>(this TB action, string propertyName, T value)
             where TA : ParameterBaseAttribute where TB : class
         {
-            var propertyInfo = action
-                .GetAllProperties()
-                .FirstOrDefault(prop => prop.GetCustomAttributes<TA>(false)
-                    .Any(attr => attr.Tag == propertyName));
-
-            if (propertyInfo == null || !propertyInfo.CanWrite)
+            try
             {
-                return;
+                var propertyInfo = action
+                    .GetAllProperties()
+                    .FirstOrDefault(prop => prop.GetCustomAttributes<TA>(false)
+                        .Any(attr => attr.Tag == propertyName));
+
+                if (propertyInfo == null || !propertyInfo.CanWrite)
+                {
+                    return;
+                }
+
+                var parameter = propertyInfo.GetCustomAttributes(typeof(TA), false)
+                    .Cast<TA>()
+                    .FirstOrDefault(attr => attr.Tag == propertyName);
+
+                // 値の型が正しいかチェックし、プロパティに値を設定
+                if (propertyInfo.PropertyType == value.GetType())
+                {
+                    propertyInfo.SetValue(action, value);
+                    return;
+                }
+
+                // if can set attr.Value to propertyInfo
+                if (parameter == null || parameter.DefaultValue.GetType() != propertyInfo.PropertyType)
+                {
+                    throw new InvalidOperationException(
+                        $"Type mismatch for property '{propertyName}'. Expected type {propertyInfo.PropertyType}, but got type {value.GetType()}.");
+                }
+
+                propertyInfo.SetValue(action, parameter.DefaultValue);
             }
-
-            var parameter = propertyInfo.GetCustomAttributes(typeof(TA), false)
-                .Cast<TA>()
-                .FirstOrDefault(attr => attr.Tag == propertyName);
-
-            // 値の型が正しいかチェックし、プロパティに値を設定
-            if (propertyInfo.PropertyType == value.GetType())
+            catch (Exception e)
             {
-                propertyInfo.SetValue(action, value);
-                return;
+                Console.WriteLine($"Error setting property {propertyName} on {action.GetType().Name}: {e.Message}");
+                throw;
             }
-
-            // if can set attr.Value to propertyInfo
-            if (parameter == null || parameter.DefaultValue.GetType() != propertyInfo.PropertyType)
-            {
-                throw new InvalidOperationException(
-                    $"Type mismatch for property '{propertyName}'. Expected type {propertyInfo.PropertyType}, but got type {value.GetType()}.");
-            }
-
-            propertyInfo.SetValue(action, parameter.DefaultValue);
         }
 
         public static void SetProperty<T>(this ActionBase action, string propertyName, T value)
